@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CIS 2170 — Final Prep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:          #F7F3EE;
+  --bg2:         #EDE9E2;
+  --surface:     #FFFFFF;
+  --text:        #1C1410;
+  --text2:       #6B5E52;
+  --text3:       #A89E96;
+  --accent:      #B83B0F;
+  --accent-lt:   rgba(184,59,15,0.10);
+  --on-accent:   #FFFFFF;
+  --correct:     #1A5C35;
+  --correct-bg:  rgba(26,92,53,0.09);
+  --correct-ring:rgba(26,92,53,0.28);
+  --wrong:       #B81C1C;
+  --wrong-bg:    rgba(184,28,28,0.09);
+  --wrong-ring:  rgba(184,28,28,0.28);
+  --sh-sm: 0 1px 3px rgba(28,20,16,0.07), 0 1px 2px rgba(28,20,16,0.04);
+  --sh-md: 0 4px 14px rgba(28,20,16,0.09);
+  --r:  12px;
+  --rl: 18px;
+  --p:  20px;
+}
+[data-theme="dark"] {
+  --bg:          #100E0C;
+  --bg2:         #1A1714;
+  --surface:     #221F1C;
+  --text:        #F0EAE2;
+  --text2:       #9C9189;
+  --text3:       #5C5650;
+  --accent:      #E8622B;
+  --accent-lt:   rgba(232,98,43,0.14);
+  --correct:     #3DB870;
+  --correct-bg:  rgba(61,184,112,0.10);
+  --correct-ring:rgba(61,184,112,0.28);
+  --wrong:       #E86060;
+  --wrong-bg:    rgba(232,96,96,0.10);
+  --wrong-ring:  rgba(232,96,96,0.28);
+  --sh-sm: 0 1px 4px rgba(0,0,0,0.3);
+  --sh-md: 0 4px 18px rgba(0,0,0,0.4);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { background: var(--bg); }
+body {
+  font-family: 'Instrument Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  transition: background .25s, color .25s;
+}
+.wrap {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  position: relative;
+}
+
+/* TOP BAR */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 13px var(--p) 11px;
+  padding-top: calc(13px + env(safe-area-inset-top));
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg);
+}
+.wordmark {
+  font-family: 'Fraunces', serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  font-variation-settings: "opsz" 18;
+  flex-shrink: 0;
+}
+.prog-wrap { flex: 1; }
+.prog-track {
+  height: 2px;
+  background: var(--bg2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.prog-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 99px;
+  width: 0%;
+  transition: width .45s cubic-bezier(.22,1,.36,1);
+}
+.q-count {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text3);
+  font-feature-settings: "tnum";
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* THEME TOGGLE */
+.toggle {
+  position: relative;
+  width: 46px;
+  height: 25px;
+  background: var(--bg2);
+  border-radius: 99px;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .2s;
+}
+.toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: var(--sh-sm);
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+[data-theme="dark"] .toggle-knob { transform: translateX(21px); }
+
+/* BACK BTN */
+.back-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--bg2);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: opacity .15s;
+}
+.back-btn:active { opacity: .6; }
+
+/* SCREEN TRANSITIONS */
+.screen { display: none; }
+.screen.active {
+  display: block;
+  animation: rise .28s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes rise {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ─── HOME ─────────────────────────────────────────────────────────────── */
+.home-pad { padding: 0 var(--p) calc(32px + env(safe-area-inset-bottom)); }
+
+.hero {
+  padding: 24px 0 28px;
+  border-bottom: 1px solid var(--bg2);
+  margin-bottom: 28px;
+}
+.hero-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -.03em;
+  color: var(--text);
+  font-variation-settings: "opsz" 36;
+  margin-bottom: 8px;
+}
+.hero-sub { font-size: 14px; color: var(--text2); line-height: 1.5; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.chip {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text2);
+  background: var(--bg2);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+/* SECTION LABEL */
+.section-lbl {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 14px;
+}
+
+/* PLAN */
+.plan-grp { margin-bottom: 22px; }
+.plan-grp-head {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.plan-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--bg2);
+}
+.plan-row:last-child { border-bottom: none; }
+.plan-lec {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+  min-width: 46px;
+  padding-top: 1px;
+  flex-shrink: 0;
+}
+.plan-info { flex: 1; min-width: 0; }
+.plan-name { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; margin-bottom: 2px; }
+.plan-desc { font-size: 12px; color: var(--text2); line-height: 1.4; }
+.tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 5px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 1px;
+}
+.tag-focus { background: var(--accent-lt); color: var(--accent); }
+.tag-read  { background: var(--bg2); color: var(--text2); }
+.tag-skim  { background: var(--bg2); color: var(--text3); }
+
+.skip-box {
+  background: var(--bg2);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  margin-bottom: 28px;
+}
+.skip-head {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 9px;
+}
+.skip-li {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.55;
+  padding: 3px 0 3px 13px;
+  position: relative;
+}
+.skip-li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 9px;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--text3);
+}
+
+/* TOPIC GRID */
+.topic-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.topic-card {
+  background: var(--surface);
+  border-radius: var(--r);
+  padding: 15px 14px;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: var(--sh-sm);
+  transition: transform .13s, box-shadow .13s;
+  -webkit-user-select: none;
+  display: block;
+  width: 100%;
+}
+.topic-card:active { transform: scale(.965); box-shadow: none; }
+.tc-name { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 2px; line-height: 1.3; }
+.tc-count { font-size: 11.5px; color: var(--text3); font-weight: 500; }
+
+.btn-primary {
+  width: 100%;
+  background: var(--accent);
+  color: var(--on-accent);
+  border: none;
+  border-radius: var(--r);
+  padding: 15px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: .01em;
+  transition: opacity .15s, transform .12s;
+  margin-bottom: 8px;
+}
+.btn-primary:active { opacity: .85; transform: scale(.98); }
+.btn-ghost {
+  width: 100%;
+  background: var(--bg2);
+  color: var(--text2);
+  border: none;
+  border-radius: var(--r);
+  padding: 13px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: .01em;
+  transition: opacity .15s;
+}
+.btn-ghost:active { opacity: .7; }
+
+/* ─── QUIZ ─────────────────────────────────────────────────────────────── */
+.quiz-body {
+  padding: 16px var(--p) 0;
+  padding-bottom: 0;
+}
+.q-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+.q-typelbl {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--text3);
+  background: var(--bg2);
+  padding: 3px 8px;
+  border-radius: 5px;
+  margin-bottom: 14px;
+}
+.q-text {
+  font-family: 'Fraunces', serif;
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.37;
+  letter-spacing: -.02em;
+  color: var(--text);
+  font-variation-settings: "opsz" 24;
+  margin-bottom: 24px;
+}
+
+/* OPTIONS */
+.opts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.opt {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 14px 15px;
+  background: var(--surface);
+  border-radius: var(--r);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: var(--sh-sm);
+  transition: background .13s, border-color .13s, transform .11s;
+  width: 100%;
+  -webkit-user-select: none;
+}
+.opt:active:not(:disabled) { transform: scale(.985); }
+.opt.sel    { background: var(--accent-lt); border-color: var(--accent); box-shadow: none; }
+.opt.right  { background: var(--correct-bg) !important; border-color: var(--correct-ring) !important; box-shadow: none; }
+.opt.wrong  { background: var(--wrong-bg) !important;   border-color: var(--wrong-ring) !important;   box-shadow: none; }
+.opt.ghost  { background: var(--correct-bg) !important; border-color: var(--correct-ring) !important; box-shadow: none; opacity: .65; }
+.opt:disabled { cursor: default; }
+
+.opt-key {
+  width: 26px; height: 26px; border-radius: 7px;
+  background: var(--bg2);
+  font-size: 11.5px; font-weight: 700;
+  color: var(--text3);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background .13s, color .13s;
+}
+.opt.sel   .opt-key { background: var(--accent);   color: #fff; }
+.opt.right .opt-key { background: var(--correct); color: #fff; }
+.opt.wrong .opt-key { background: var(--wrong);   color: #fff; }
+.opt.ghost .opt-key { background: var(--correct); color: #fff; }
+
+.opt-lbl { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.4; flex: 1; }
+.opt.right .opt-lbl { color: var(--correct); }
+.opt.wrong .opt-lbl { color: var(--wrong); }
+.opt.ghost .opt-lbl { color: var(--correct); }
+
+/* T/F */
+.tf-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+.tf-btn {
+  padding: 22px 16px;
+  background: var(--surface);
+  border-radius: var(--rl);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  font-family: 'Fraunces', serif;
+  font-size: 18px; font-weight: 600;
+  color: var(--text);
+  font-variation-settings: "opsz" 18;
+  box-shadow: var(--sh-sm);
+  transition: background .13s, border-color .13s, transform .11s, color .13s;
+  -webkit-user-select: none;
+}
+.tf-btn:active:not(:disabled) { transform: scale(.97); }
+.tf-btn.sel   { background: var(--accent-lt); border-color: var(--accent); color: var(--accent); box-shadow: none; }
+.tf-btn.right { background: var(--correct-bg) !important; border-color: var(--correct-ring) !important; color: var(--correct) !important; box-shadow: none; }
+.tf-btn.wrong { background: var(--wrong-bg) !important;   border-color: var(--wrong-ring) !important;   color: var(--wrong) !important;   box-shadow: none; }
+.tf-btn.ghost { background: var(--correct-bg) !important; border-color: var(--correct-ring) !important; color: var(--correct) !important; box-shadow: none; opacity: .65; }
+.tf-btn:disabled { cursor: default; }
+
+/* EXPLANATION */
+.expl-wrap { overflow: hidden; max-height: 0; transition: max-height .38s cubic-bezier(.22,1,.36,1); margin-bottom: 0; }
+.expl-wrap.open { max-height: 500px; margin-bottom: 14px; }
+.expl-inner {
+  padding: 13px 15px;
+  background: var(--bg2);
+  border-radius: var(--r);
+  border-left: 2.5px solid var(--accent);
+  margin-top: 2px;
+}
+.expl-inner.right-e { border-left-color: var(--correct); }
+.expl-inner.wrong-e  { border-left-color: var(--wrong); }
+.expl-v {
+  font-size: 10.5px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.expl-v.rv { color: var(--correct); }
+.expl-v.wv { color: var(--wrong); }
+.expl-body { font-size: 13.5px; color: var(--text2); line-height: 1.55; }
+
+/* QUIZ BOTTOM */
+.quiz-foot {
+  position: sticky;
+  bottom: 0;
+  padding: 10px var(--p) calc(18px + env(safe-area-inset-bottom));
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.sub-btn {
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--r);
+  padding: 15px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 15px; font-weight: 600;
+  cursor: pointer;
+  letter-spacing: .01em;
+  transition: opacity .15s, transform .12s;
+}
+.sub-btn:active:not(:disabled) { transform: scale(.98); }
+.sub-btn:disabled { background: var(--bg2); color: var(--text3); cursor: not-allowed; }
+.nxt-btn {
+  display: none;
+  width: 100%;
+  background: var(--bg2);
+  color: var(--text2);
+  border: none;
+  border-radius: var(--r);
+  padding: 13px;
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 14px; font-weight: 600;
+  cursor: pointer;
+  letter-spacing: .01em;
+  transition: opacity .15s;
+}
+.nxt-btn.show { display: block; }
+.nxt-btn:active { opacity: .7; }
+
+/* ─── RESULTS ──────────────────────────────────────────────────────────── */
+.res-pad { padding: 0 var(--p) calc(32px + env(safe-area-inset-bottom)); }
+.res-hero {
+  text-align: center;
+  padding: 28px 0 28px;
+  border-bottom: 1px solid var(--bg2);
+  margin-bottom: 24px;
+}
+.res-pct {
+  font-family: 'Fraunces', serif;
+  font-size: 76px; font-weight: 700;
+  letter-spacing: -.05em; line-height: 1;
+  font-variation-settings: "opsz" 72;
+  margin-bottom: 4px;
+}
+.res-pct.good  { color: var(--correct); }
+.res-pct.mid   { color: var(--text); }
+.res-pct.low   { color: var(--wrong); }
+.res-sub { font-size: 14px; color: var(--text3); font-weight: 500; }
+.stats3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+.stat-box { background: var(--surface); border-radius: var(--r); padding: 16px 10px; text-align: center; box-shadow: var(--sh-sm); }
+.stat-n { font-family: 'Fraunces', serif; font-size: 30px; font-weight: 700; letter-spacing: -.03em; font-variation-settings: "opsz" 28; line-height:1; margin-bottom:4px; }
+.stat-n.c { color: var(--correct); }
+.stat-n.w { color: var(--wrong); }
+.stat-n.t { color: var(--text2); }
+.stat-l { font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); }
+.res-msg { background: var(--bg2); border-radius: var(--rl); padding: 16px 17px; margin-bottom: 20px; font-size: 14px; color: var(--text2); line-height: 1.6; }
+.res-msg strong { color: var(--text); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ══════════════════════════════ HOME ════════════════════════════════════ -->
+<div id="s-home" class="screen active">
+  <div class="topbar">
+    <span class="wordmark">CIS 2170</span>
+    <button class="toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="toggle-knob"></div>
+    </button>
+  </div>
+
+  <div class="home-pad">
+    <div class="hero">
+      <div class="hero-eyebrow">Final Exam Prep</div>
+      <div class="hero-title">User Interface<br>Design</div>
+      <div class="hero-sub">Lec 15–22 plus selected pre-midterm content.</div>
+      <div class="chips">
+        <span class="chip">Apr 21 · 2:30 PM</span>
+        <span class="chip">50 MCQ · 20 T/F · 6 Short Answer</span>
+        <span class="chip">40% pre / 60% post midterm</span>
+      </div>
+    </div>
+
+    <div class="section-lbl">2.5 — Hour Study Plan</div>
+    <div class="plan-grp">
+      <div class="plan-grp-head">Hour 1 — Post-Midterm Core</div>
+      <div class="plan-row">
+        <span class="plan-lec">Lec 15</span>
+        <div class="plan-info">
+          <div class="plan-name">Dark Patterns</div>
+          <div class="plan-desc">All 10 types, their harm, and fair alternatives. Expect scenario-based MCQ.</div>
+        </div>
+        <span class="tag tag-focus">Focus</span>
+      </div>
+      <div class="plan-row">
+        <span class="plan-lec">Lec 16</span>
+        <div class="plan-info">
+          <div class="plan-name">UX Laws</div>
+          <div class="plan-desc">Fitts, Hick, Miller, Jakob — formulas conceptually, design tips, when to apply each.</div>
+        </div>
+        <span class="tag tag-focus">Focus</span>
+      </div>
+      <div class="plan-row">
+        <span class="plan-lec">Lec 17/18</span>
+        <div class="plan-info">
+          <div class="plan-name">WCAG Accessibility</div>
+          <div class="plan-desc">POUR principles, 3 levels (A/AA/AAA), contrast 4.5:1, keyboard access.</div>
+        </div>
+        <span class="tag tag-read">Read</span>
+      </div>
+    </div>
+
+    <div class="plan-grp">
+      <div class="plan-grp-head">Hour 2 — Research & Data</div>
+      <div class="plan-row">
+        <span class="plan-lec">Lec 19</span>
+        <div class="plan-info">
+          <div class="plan-name">HCI Research Methods</div>
+          <div class="plan-desc">5 methods: interviews, observation, think-aloud, surveys, metrics. Qual vs quant.</div>
+        </div>
+        <span class="tag tag-focus">Focus</span>
+      </div>
+      <div class="plan-row">
+        <span class="plan-lec">Lec 20</span>
+        <div class="plan-info">
+          <div class="plan-name">HCI Data Analysis</div>
+          <div class="plan-desc">T-test vs ANOVA, p-value vs Cohen's d, thematic analysis, affinity diagrams.</div>
+        </div>
+        <span class="tag tag-focus">Focus</span>
+      </div>
+      <div class="plan-row">
+        <span class="plan-lec">Lec 21/22</span>
+        <div class="plan-info">
+          <div class="plan-name">AI / No-Code + Smallville</div>
+          <div class="plan-desc">5 AI risks, CARE framework, 7 deadly sins. Lec 22 = 2 questions on Smallville paper.</div>
+        </div>
+        <span class="tag tag-skim">Skim</span>
+      </div>
+    </div>
+
+    <div class="plan-grp">
+      <div class="plan-grp-head">Hour 3 — Pre-Midterm (40%)</div>
+      <div class="plan-row">
+        <span class="plan-lec">Lec 10</span>
+        <div class="plan-info">
+          <div class="plan-name">Gestalt Principles</div>
+          <div class="plan-desc">Proximity, similarity, closure, figure-ground, continuity, common fate.</div>
+        </div>
+        <span class="tag tag-read">Read</span>
+      </div>
+      <div class="plan-row">
+        <span class="plan-lec">Lec 13</span>
+        <div class="plan-info">
+          <div class="plan-name">Nielsen's 10 Heuristics</div>
+          <div class="plan-desc">All 10 names and what each means — from the midterm review slides.</div>
+        </div>
+        <span class="tag tag-read">Read</span>
+      </div>
+      <div class="plan-row">
+        <span class="plan-lec">Lec 5</span>
+        <div class="plan-info">
+          <div class="plan-name">Personas, Scenarios, Use Cases</div>
+          <div class="plan-desc">Persona = fictional user, scenario = narrative, use case = actor–system interaction.</div>
+        </div>
+        <span class="tag tag-skim">Skim</span>
+      </div>
+      <div class="plan-row">
+        <span class="plan-lec">Lec 9</span>
+        <div class="plan-info">
+          <div class="plan-name">IA and Card Sorting</div>
+          <div class="plan-desc">IA = organization + navigation + search + labeling. Open vs closed card sort.</div>
+        </div>
+        <span class="tag tag-skim">Skim</span>
+      </div>
+    </div>
+
+    <div class="skip-box">
+      <div class="skip-head">Skip entirely</div>
+      <div class="skip-li">All lab procedure slides (Figma steps, paper prototype how-to)</div>
+      <div class="skip-li">In-class activity description slides</div>
+      <div class="skip-li">WCAG guideline numbers — know the principle, not the number</div>
+      <div class="skip-li">Full formula memorization for Fitts and T-test — know what the variables mean</div>
+    </div>
+
+    <div class="section-lbl">Practice by Topic</div>
+    <div class="topic-grid">
+      <button class="topic-card" onclick="startQuiz('dark')">
+        <div class="tc-name">Dark Patterns</div>
+        <div class="tc-count">12 questions</div>
+      </button>
+      <button class="topic-card" onclick="startQuiz('uxlaws')">
+        <div class="tc-name">UX Laws</div>
+        <div class="tc-count">10 questions</div>
+      </button>
+      <button class="topic-card" onclick="startQuiz('wcag')">
+        <div class="tc-name">WCAG</div>
+        <div class="tc-count">10 questions</div>
+      </button>
+      <button class="topic-card" onclick="startQuiz('research')">
+        <div class="tc-name">Research Methods</div>
+        <div class="tc-count">10 questions</div>
+      </button>
+      <button class="topic-card" onclick="startQuiz('data')">
+        <div class="tc-name">Data Analysis</div>
+        <div class="tc-count">10 questions</div>
+      </button>
+      <button class="topic-card" onclick="startQuiz('ai')">
+        <div class="tc-name">AI & No-Code</div>
+        <div class="tc-count">8 questions</div>
+      </button>
+      <button class="topic-card" style="grid-column:1/-1;" onclick="startQuiz('premid')">
+        <div class="tc-name">Pre-Midterm Review</div>
+        <div class="tc-count">14 questions — Gestalt, Heuristics, Personas, IA</div>
+      </button>
+    </div>
+    <button class="btn-primary" onclick="startQuiz('all')">Practice All 74 Questions</button>
+    <button class="btn-ghost" onclick="startRandom()">Shuffle 20 Random Questions</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ QUIZ ════════════════════════════════════ -->
+<div id="s-quiz" class="screen">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+      <button class="back-btn" onclick="goHome()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-track"><div class="prog-fill" id="pFill"></div></div>
+    </div>
+    <div class="q-count" id="qCount">1 / 74</div>
+  </div>
+
+  <div class="quiz-body">
+    <div class="q-eyebrow" id="qTopic"></div>
+    <div class="q-typelbl" id="qType">MCQ</div>
+    <div class="q-text" id="qText">…</div>
+    <div class="opts" id="optsList"></div>
+    <div class="tf-pair" id="tfPair" style="display:none;"></div>
+    <div class="expl-wrap" id="explWrap">
+      <div class="expl-inner" id="explInner">
+        <div class="expl-v" id="explV"></div>
+        <div class="expl-body" id="explBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz-foot">
+    <button class="sub-btn" id="subBtn" onclick="submit()" disabled>Submit</button>
+    <button class="nxt-btn" id="nxtBtn" onclick="next()">Continue</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════ RESULTS ══════════════════════════════════ -->
+<div id="s-res" class="screen">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button class="back-btn" onclick="goHome()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <span class="wordmark">Results</span>
+    </div>
+  </div>
+  <div class="res-pad">
+    <div class="res-hero">
+      <div class="res-pct" id="resPct">—</div>
+      <div class="res-sub" id="resSub"></div>
+    </div>
+    <div class="stats3">
+      <div class="stat-box"><div class="stat-n c" id="rC">0</div><div class="stat-l">Correct</div></div>
+      <div class="stat-box"><div class="stat-n w" id="rW">0</div><div class="stat-l">Wrong</div></div>
+      <div class="stat-box"><div class="stat-n t" id="rT">0</div><div class="stat-l">Total</div></div>
+    </div>
+    <div class="res-msg" id="resMsg"></div>
+    <button class="btn-primary" id="retryBtn" onclick="retry()">Try Again</button>
+    <button class="btn-ghost" style="margin-top:8px;" onclick="goHome()">Back to Home</button>
+  </div>
+</div>
+
+</div><!-- .wrap -->
+<script>
+// ── THEME ────────────────────────────────────────────────────────────────────
+const R = document.documentElement;
+function toggleTheme() {
+  const d = R.getAttribute('data-theme') === 'dark';
+  R.setAttribute('data-theme', d ? 'light' : 'dark');
+  localStorage.setItem('theme', d ? 'light' : 'dark');
+}
+(function(){
+  const s = localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
+  R.setAttribute('data-theme', s);
+})();
+
+// ── QUESTION BANK ────────────────────────────────────────────────────────────
+const TN = {dark:'Dark Patterns',uxlaws:'UX Laws',wcag:'WCAG',research:'Research Methods',data:'Data Analysis',ai:'AI & No-Code',premid:'Pre-Midterm'};
+const Q=[
+  {t:'dark',tp:'mcq',q:'A checkout page has a "No thanks, I don\'t want to save money" decline button. Which dark pattern is this?',o:['Nagging','Confirmshaming','Preselection','Sneaking'],a:1,e:'Confirmshaming uses guilt or shame to make refusing feel like a bad personal decision. Neutral alternatives are suppressed in favour of guilt-inducing language.'},
+  {t:'dark',tp:'mcq',q:'A travel site shows "Only 1 seat left!" with a countdown timer that resets every reload. This is:',o:['Roach motel','Preselection','Fake urgency / FOMO','Intentional misdirection'],a:2,e:'Fake urgency / FOMO creates artificial scarcity or time pressure. A countdown that resets is textbook — the urgency is fabricated.'},
+  {t:'dark',tp:'mcq',q:'A service has one-click sign-up, but cancellation requires calling a phone number. This is:',o:['Sneaking','Roach motel (easy in, hard out)','Preselection','Negative option billing'],a:1,e:'Roach motel = easy to get in, deliberately hard to get out. Cancellation parity (same channel, similar effort) is the fair alternative.'},
+  {t:'dark',tp:'mcq',q:'Travel insurance is already checked in your cart even though you never selected it. This is:',o:['Sneaking','Preselection / defaults','Disguised ads','Nagging'],a:1,e:'Preselection pre-ticks boxes so company-benefiting choices happen unless the user actively opts out. Fair alternative: default-off for non-essential add-ons.'},
+  {t:'dark',tp:'mcq',q:'A news site mixes sponsored "Download" buttons that visually match normal article links. Which dark pattern?',o:['Friend spam','Disguised ads','Intentional misdirection','Fake urgency'],a:1,e:'Disguised ads make ads look like navigation, downloads, or normal content, tricking users into misclicks. Clear "Ad" labelling and visual separation is the fix.'},
+  {t:'dark',tp:'tf',q:'Roach motel and negative option billing are the same dark pattern.',a:false,e:'They are different. Roach motel = easy sign-up but hard cancellation. Negative option billing = a trial quietly converts to recurring charges without adequate notice.'},
+  {t:'dark',tp:'mcq',q:'An app shows the same push-notification prompt every day, only offering "Not now" — no permanent dismiss. This is:',o:['Confirmshaming','Preselection','Nagging','Friend spam'],a:2,e:'Nagging repeatedly asks for the same permission with no durable "No." Fair alternative: respect refusal for a meaningful period and provide settings access at any time.'},
+  {t:'dark',tp:'mcq',q:'A company harvests your contacts and sends invites to everyone on your behalf without your clear understanding. This is:',o:['Negative option billing','Friend spam','Sneaking','Roach motel'],a:1,e:'Friend spam obtains access to your social graph in ways you don\'t fully understand. Fix: explicit consent + recipient preview.'},
+  {t:'dark',tp:'tf',q:'A free trial requiring a credit card that auto-renews after 7 days with no reminder is an example of negative option billing.',a:true,e:'Correct. Negative option billing converts a trial to paid charges without adequate notice or easy cancellation. Clear renewal terms + reminders + easy cancel is the fair alternative.'},
+  {t:'dark',tp:'mcq',q:'"Accept all cookies" is large and green; "Manage settings" is tiny and grey. This exploits which dark pattern?',o:['Preselection','Confirmshaming','Intentional misdirection','Sneaking'],a:2,e:'Intentional misdirection uses visual hierarchy to steer users toward the company-preferred choice, making the "No" path deliberately hard to find.'},
+  {t:'dark',tp:'mcq',q:'What is the correct fair alternative for Sneaking (hidden add-ons in a cart)?',o:['Allow opt-out at any time','Default-off for add-ons with a clear itemized summary before purchase','Use neutral button labels with equal visual weight','Provide a "Never" option instead of "Not now"'],a:1,e:'Sneaking adds items without explicit opt-in. The fix: default-off for add-ons and a transparent, itemized summary before the user finalizes payment.'},
+  {t:'dark',tp:'tf',q:'Dark patterns are interface practices that manipulate users into choices not in their best interests.',a:true,e:'Correct. Course definition: "Dark patterns are interface practices that steer, deceive, coerce, or manipulate people into choices that are often not in their best interests — money, data, or attention."'},
+  {t:'uxlaws',tp:'mcq',q:'Which design change most effectively reduces movement time to a very small target (Fitts\'s Law)?',o:['Increasing distance to the target','Decreasing the size of small targets','Making a very small target larger','Moving targets away from screen edges'],a:2,e:'The biggest MT gains come from enlarging very small targets. Large targets already have diminishing returns. MT = a + b·log₂(D/W+1).'},
+  {t:'uxlaws',tp:'mcq',q:'Why does Fitts\'s Law recommend placing important controls near screen edges?',o:['Edges have higher contrast','Screen edges act as infinite-width targets — no overshooting possible','Edges reduce cognitive load','It reduces the Index of Difficulty to zero'],a:1,e:'Screen edges stop cursor movement automatically, making the effective target width infinite. macOS puts the menu bar at the top edge for this reason.'},
+  {t:'uxlaws',tp:'mcq',q:'Hick–Hyman Law says decision time increases with number of choices. Which pattern directly applies this?',o:['Using infinite scroll','Progressive disclosure — revealing options step by step','Increasing target sizes','Using high-contrast colour'],a:1,e:'Progressive disclosure applies Hick\'s Law by not overwhelming users with all choices at once. Other Hick tips: simplify navigation, group related info, prioritize key actions.'},
+  {t:'uxlaws',tp:'tf',q:'Miller\'s Law means all menus should have exactly 7 items.',a:false,e:'Miller\'s Law is about "chunks" in working memory, not a menu design rule. A chunk is a meaningful grouping. Chunk information meaningfully — don\'t blindly limit menus to 7 items.'},
+  {t:'uxlaws',tp:'mcq',q:'A designer makes the X button open settings instead of close the dialog. Which law explains why this is problematic?',o:['Fitts\'s Law','Hick–Hyman Law','Jakob\'s Law','Miller\'s Law'],a:2,e:'Jakob\'s Law: users expect your product to work like other products they know. Breaking conventions like X = close increases errors and confusion.'},
+  {t:'uxlaws',tp:'mcq',q:'Holding target width W constant, what happens to movement time if distance D doubles?',o:['MT stays the same','MT decreases','MT increases','MT doubles exactly'],a:2,e:'MT = a + b·log₂(D/W+1). Increasing D increases MT. The relationship is logarithmic, not linear — doubling D does not double MT, but does increase it.'},
+  {t:'uxlaws',tp:'mcq',q:'Which law supports splitting a long form into shorter steps?',o:['Jakob\'s Law','Fitts\'s Law','Miller\'s Law','Hick–Hyman Law'],a:2,e:'Miller\'s Law: limit items a user must process at once. Chunking a long form into steps reduces working memory load and prevents cognitive overload.'},
+  {t:'uxlaws',tp:'tf',q:'According to Jakob\'s Law, breaking UI conventions is always wrong and should never be done.',a:false,e:'Jakob\'s Law says breaking conventions requires "a strong payoff plus clear signposting." It can be done, but the UX benefit must outweigh the learning cost.'},
+  {t:'uxlaws',tp:'mcq',q:'Dark patterns exploit Jakob\'s Law by:',o:['Making targets larger','Breaking UI conventions intentionally to trick users (e.g., X doesn\'t close)','Removing time limits','Using progressive disclosure to hide options'],a:1,e:'Jakob\'s Law notes: "in dark patterns, breaking conventions is used to trick." Exploiting users\' learned expectations is a form of intentional misdirection.'},
+  {t:'uxlaws',tp:'mcq',q:'A designer groups 20 nav items into 5 categories of 4. This primarily applies:',o:['Fitts\'s Law only','Hick\'s Law and Miller\'s Law','Jakob\'s Law only','No cognitive basis'],a:1,e:'Grouping reduces top-level choices (Hick) and creates meaningful chunks (Miller). Both laws apply simultaneously.'},
+  {t:'wcag',tp:'mcq',q:'What does the acronym POUR stand for in WCAG?',o:['Perceivable, Operable, Understandable, Robust','Purposeful, Ordered, Usable, Responsive','Perceivable, Ordered, Universal, Reliable','Practical, Operable, Understandable, Responsive'],a:0,e:'POUR = Perceivable, Operable, Understandable, Robust. These are the 4 core WCAG principles. Every guideline falls under one of these.'},
+  {t:'wcag',tp:'mcq',q:'The "Robust" WCAG principle means:',o:['Content must withstand user errors','Content must work across browsers, devices, and assistive technologies now and in the future','Content must be perceivable to all users','All text must be readable at any zoom level'],a:1,e:'Robust = content must be compatible with current and future user agents, especially assistive technologies. Semantic HTML and valid code help ensure this.'},
+  {t:'wcag',tp:'mcq',q:'Which WCAG conformance level is the widely expected practical standard for most websites?',o:['Level A','Level AA','Level AAA','WCAG 2.0'],a:1,e:'Level AA is the broadly expected standard. Level A removes the most severe barriers. Level AAA is the highest but hard to achieve everywhere. Most legal requirements target AA.'},
+  {t:'wcag',tp:'tf',q:'WCAG Guideline 1.4 requires a minimum colour contrast ratio of 4.5:1 for normal text at Level AA.',a:true,e:'Correct. 4.5:1 is the AA standard for normal text. Large text (18pt+) needs only 3:1. Level AAA requires 7:1 for normal text.'},
+  {t:'wcag',tp:'mcq',q:'Under WCAG Guideline 1.1, what is required for an image that conveys important information?',o:['The image must be large enough to see','A text alternative (alt text) must be provided','The image must have sufficient colour contrast','Captions must be added'],a:1,e:'Guideline 1.1 — Text Alternatives: provide text alternatives for all non-text content. This allows screen readers to describe visuals to users with visual impairments.'},
+  {t:'wcag',tp:'mcq',q:'Which WCAG principle covers the requirement that all interactive elements must be keyboard accessible?',o:['Perceivable','Operable','Understandable','Robust'],a:1,e:'Operable: users must be able to navigate and interact with all interface elements. Keyboard accessibility falls under Operable (Guideline 2.1).'},
+  {t:'wcag',tp:'tf',q:'Under WCAG\'s "Understandable" principle, error messages should help users understand what went wrong and how to correct it.',a:true,e:'Understandable = clear, predictable, and helpful. Guideline 3.3 (Input Assistance) requires error messages that identify the problem and describe how to fix it.'},
+  {t:'wcag',tp:'mcq',q:'A page has a 3-second auto-advancing carousel with no way to pause it. Which WCAG guideline does this violate?',o:['1.1 Text Alternatives','2.2 Enough Time','3.2 Predictable','4.1 Robust'],a:1,e:'Guideline 2.2 (Enough Time) under Operable: provide users enough time to read and use content. Auto-advancing carousels with no pause control fail this.'},
+  {t:'wcag',tp:'mcq',q:'Providing captions for all videos falls under which WCAG principle?',o:['Robust','Understandable','Perceivable','Operable'],a:2,e:'Perceivable: information must be presented in ways all users can perceive. Guideline 1.2 (Time-based Media) requires captions and transcripts for deaf or hard-of-hearing users.'},
+  {t:'wcag',tp:'tf',q:'A button that relies only on colour to indicate its active state (no text or icon label) likely violates the Perceivable principle.',a:true,e:'Guideline 1.4 warns against relying solely on colour to convey information. Users with colour vision deficiency cannot perceive colour differences. A text label or icon must supplement colour.'},
+  {t:'research',tp:'mcq',q:'A UX team wants to understand why users abandon a signup form. Which method is most appropriate?',o:['A/B testing with timing','Likert-scale survey','Think-aloud usability testing','Task completion rate measurement'],a:2,e:'Think-aloud usability testing surfaces WHY users struggle by having them narrate their actions. Quantitative methods tell you the drop-off rate but not the reasoning behind it.'},
+  {t:'research',tp:'mcq',q:'What distinguishes contextual inquiry from a standard user interview?',o:['Contextual inquiry uses structured questionnaires','Contextual inquiry involves observing users in their natural setting performing real tasks','Contextual inquiry only collects quantitative data','Contextual inquiry requires at least 30 participants'],a:1,e:'Contextual inquiry = watching users do real tasks in context. It captures behaviour and workarounds users may not mention in an interview.'},
+  {t:'research',tp:'mcq',q:'Which of the following is a quantitative UX research question?',o:['What frustrates users about the checkout flow?','What do users expect when clicking Cancel?','Which design version has a higher task completion rate?','What mental model do users bring to navigation?'],a:2,e:'Quantitative questions involve measurement and comparison: completion rates, time on task, error rates. The others require understanding experience and meaning — these are qualitative.'},
+  {t:'research',tp:'tf',q:'Qualitative and quantitative methods are rivals — you must choose one or the other.',a:false,e:'Mixed methods are often the strongest approach. Qualitative explains WHY; quantitative shows HOW MUCH. Many strong HCI studies combine both.'},
+  {t:'research',tp:'mcq',q:'A researcher asks "Don\'t you agree the new design is clearer?" during an interview. This violates which best practice?',o:['Interviews must be quantitative','Avoid leading questions — they suggest desired answers','Interviews must involve at least 10 participants','Use only closed yes/no questions'],a:1,e:'Leading questions bias responses by implying the expected answer. Good interview questions are open-ended, neutral, and follow-up oriented.'},
+  {t:'research',tp:'mcq',q:'The question "The app was easy, fast, and visually appealing" on a survey is problematic because:',o:['It is too short','It is double-barrelled — it asks about three things at once','It uses the wrong scale','It contains jargon'],a:1,e:'Double-barrelled questions combine multiple ideas. A user might find the app fast but not visually appealing — there\'s no good way to answer. One question, one thing.'},
+  {t:'research',tp:'mcq',q:'Formative research differs from summative research in that it:',o:['Measures performance benchmarks','Occurs later when the design is stable','Happens earlier in the process to improve the design','Only uses quantitative methods'],a:2,e:'Formative = earlier, aims to improve the design (interviews, observations, pilot testing). Summative = later, aims to assess or compare (benchmarking, comparison tests, metrics).'},
+  {t:'research',tp:'mcq',q:'Which method determines whether layout A or layout B is faster for task completion?',o:['Think-aloud usability test','User interview','Comparison study (A/B test) with timing','Contextual inquiry'],a:2,e:'A comparison study with timing objectively measures which layout is faster. Think-aloud tells you why a layout confuses; interviews capture preferences; but speed measurement needs controlled comparison.'},
+  {t:'research',tp:'tf',q:'Think-aloud usability testing can produce both qualitative and simple quantitative data.',a:true,e:'Think-aloud is primarily qualitative (insight from comments), but can also yield simple quantitative metrics such as task success rate or time on task.'},
+  {t:'research',tp:'mcq',q:'A researcher wants to understand students\' actual workflow before submitting assignments — not what they say they do. Best method?',o:['Likert-scale survey','Observation / contextual inquiry','Structured interview only','A/B test with two submission page versions'],a:1,e:'Observation captures actual behaviour in context. Interviews often miss small habitual behaviours because users forget or simplify what they do.'},
+  {t:'data',tp:'mcq',q:'You want to compare task completion times for two navigation designs. Which test is most appropriate?',o:['One-way ANOVA','Paired T-test','Independent samples T-test','Chi-square test'],a:2,e:'Independent samples T-test compares means of two separate groups. Paired T-test is for the same participants measured twice. ANOVA is for 3+ groups.'},
+  {t:'data',tp:'mcq',q:'A study yields t(38) = 2.14, p = 0.038, Cohen\'s d = 0.35. What is the correct interpretation?',o:['Statistically significant with a large practical effect','Statistically significant but with a small-to-medium practical effect','Not statistically significant; d = 0.35 is too small','Both values indicate no meaningful difference'],a:1,e:'p = 0.038 < 0.05 → statistically significant. Cohen\'s d = 0.35 is between small (0.2) and medium (0.5) — a modest practical effect. Always report both.'},
+  {t:'data',tp:'mcq',q:'You have 3 onboarding designs (A, B, C) and want to compare error rates across all three. Which test?',o:['Three separate T-tests','One-way ANOVA followed by Tukey HSD post-hoc','Paired T-test','Chi-square test'],a:1,e:'One-way ANOVA is for 3+ independent groups. Running multiple T-tests inflates the false-positive rate. A significant F is followed by Tukey HSD to find which pairs differ.'},
+  {t:'data',tp:'tf',q:'A statistically significant p-value (p < 0.05) alone is sufficient to conclude a design change is practically meaningful.',a:false,e:'p < 0.05 shows the result is unlikely to be due to chance. Effect size (Cohen\'s d, η²) tells you HOW LARGE the difference is practically. Both must be reported together.'},
+  {t:'data',tp:'mcq',q:'Thematic analysis is used to analyze which type of data?',o:['Time-on-task measurements','Task success rates','Interview transcripts and qualitative observations','Likert-scale ratings'],a:2,e:'Thematic analysis is qualitative: read transcripts, generate codes, search for patterns, group into themes, define and name themes, write up supported by participant quotes.'},
+  {t:'data',tp:'mcq',q:'What is affinity diagramming used for?',o:['Calculating statistical significance','Measuring task completion time','Collaboratively clustering observations into groups to identify themes','Creating A/B test variants'],a:2,e:'Affinity diagramming: write one observation per sticky note → silently group similar notes → label each cluster → identify higher-level themes. Tools: Miro, FigJam.'},
+  {t:'data',tp:'mcq',q:'Cohen\'s d = 0.8 indicates a ________ effect size.',o:['Small','Medium','Large','Not meaningful'],a:2,e:'Cohen\'s d: 0.2 = small, 0.5 = medium, 0.8 = large. A large effect size means the practical difference between groups is substantial and meaningful for design decisions.'},
+  {t:'data',tp:'tf',q:'In a paired T-test, measuring the same participants under both conditions makes it more sensitive than an independent T-test.',a:true,e:'Correct. Paired T-test controls for individual differences by comparing each person\'s before-and-after scores, increasing sensitivity to genuine effects.'},
+  {t:'data',tp:'mcq',q:'Which data type calls for a chi-square test rather than a T-test?',o:['Interval data — IQ scores','Ratio data — task completion time','Nominal data — button colour chosen','Ordinal data — Likert ratings'],a:2,e:'Chi-square is for nominal (categorical) data — e.g., which button colour was chosen. T-test requires interval or ratio data with meaningful numeric distances.'},
+  {t:'data',tp:'mcq',q:'In ANOVA, what does a statistically significant F-statistic tell you?',o:['Which specific group pair differs','That all groups differ from each other','That at least one group mean differs — a post-hoc test is needed to find which pair','That the effect size is large'],a:2,e:'ANOVA\'s F-test only tells you "something differs somewhere." You must follow up with Tukey HSD to find the specific pair(s) that differ.'},
+  {t:'ai',tp:'mcq',q:'Which of the following is one of the 5 risks of AI-assisted UX design from Lec 21?',o:['AI is too expensive for small teams','False confidence — polished prototypes lead stakeholders to skip usability testing','AI tools cannot generate useful design output','No-code platforms are only for non-designers'],a:1,e:'The 5 AI risks: (1) Generic design, (2) Poor user fit, (3) Accessibility gaps, (4) False confidence, (5) Embedded bias. False confidence = a hi-fi AI prototype looks "done" so testing gets dropped.'},
+  {t:'ai',tp:'mcq',q:'The CARE framework for AI prompting stands for:',o:['Context, Ask, Rules, Examples','Content, Ask, Reasoning, Evaluation','Context, Action, Review, Edit','Check, Augment, Refine, Evaluate'],a:0,e:'CARE (Kate Moran, NN/g): Context (your situation), Ask (specific action + format), Rules (constraints, brand voice), Examples (good/bad examples). Vague prompts produce vague outputs.'},
+  {t:'ai',tp:'tf',q:'According to Lec 21, AI tools are reliable substitutes for real usability tests with actual users.',a:false,e:'"There is no AI substitute for a usability session. Bring 5 representative users in. Watch them use the product. You will always learn something that changes the design."'},
+  {t:'ai',tp:'mcq',q:'Which UX tasks are most directly affected by AI automation, according to Lec 21?',o:['User interviews and stakeholder meetings','Strategic design decisions','Entry-level tasks — wireframing, copywriting, icon selection, basic layouts','Contextual inquiry in the field'],a:2,e:'Lec 21: entry-level UX tasks are most directly affected, changing what junior designers are hired for and how they build skills.'},
+  {t:'ai',tp:'mcq',q:'The NN/g "7 Deadly AI Sins" includes "Bland Taste." What is the associated virtue?',o:['Automation','Skepticism','Originality','Inclusion'],a:2,e:'Bland Taste → Virtue: Originality. AI outputs are competent but generic. "Taste and discernment are your differentiating value. Modify outputs — don\'t accept the first draft."'},
+  {t:'ai',tp:'tf',q:'No-code platforms like Webflow and Bubble require knowledge of HTML and CSS.',a:false,e:'No-code = build fully functional products using visual drag-and-drop with zero programming required. Low-code (e.g., Retool, OutSystems) combines visual tools with optional custom code.'},
+  {t:'ai',tp:'mcq',q:'Which best describes the "AI intern" analogy from Lec 21?',o:['AI should make design decisions independently','Always submit AI output directly to stakeholders','Review AI output like an intern\'s first draft — never send without checking','AI tools can replace experienced designers'],a:2,e:'NN/g Ari analogy: "You wouldn\'t send an intern\'s first draft to a stakeholder without reviewing it." AI is a starting point, not a deliverable.'},
+  {t:'ai',tp:'mcq',q:'AI-generated designs risk poor user fit because:',o:['AI cannot generate visual layouts','AI outputs are too accessible','AI defaults to the average training-data user — Western, English-speaking, tech-literate — not your actual users','AI always generates mobile-first designs'],a:2,e:'"AI has never met your users. It knows the average user from its training data." Real user research is irreplaceable.'},
+  {t:'premid',tp:'mcq',q:'According to the Gestalt principle of proximity, elements placed close together are perceived as:',o:['Having the same colour','Belonging to the same group','Being animated or interactive','Being equally important'],a:1,e:'Proximity: items placed near each other are perceived as related or grouped. Foundational for layout — grouping labels with their fields, separating sections with whitespace.'},
+  {t:'premid',tp:'mcq',q:'What is the key difference between a scenario and a use case?',o:['Scenarios are quantitative; use cases are qualitative','Scenarios are narrative-based with context and motivation; use cases describe actor–system interactions step by step','Scenarios come from data; use cases are fictional','There is no difference'],a:1,e:'Scenario = short narrative with context, trigger, and outcome. Use case = structured actor ↔ system interaction (step-by-step). Personas compress who; scenarios show context; use cases define system interaction.'},
+  {t:'premid',tp:'mcq',q:'Nielsen\'s heuristic "Visibility of system status" means:',o:['The system should look good on screen','The system should always keep users informed about what is happening through timely feedback','All errors must be visible at all times','Navigation should always be visible'],a:1,e:'Heuristic #1: keep users informed through appropriate, timely feedback. Examples: progress bars, loading indicators, upload confirmation messages.'},
+  {t:'premid',tp:'mcq',q:'Information Architecture (IA) is best described as:',o:['The visual design of buttons and icons','Organization + navigation + search + labeling of content','The process of writing user stories','A wireframe with interaction design'],a:1,e:'IA = organization + navigation + search + labeling. It defines how information is structured and how users find and understand it. Good IA aligns with users\' mental models.'},
+  {t:'premid',tp:'tf',q:'Personas should be based primarily on designer opinions and assumptions, not on research data.',a:false,e:'"Personas are not about opinion, hearsay, or stereotypes. They are grounded in evidence." Assumption-based personas are just stereotypes — not useful design tools.'},
+  {t:'premid',tp:'mcq',q:'Which Gestalt principle explains why we perceive a circle made of dashed lines as a complete circle?',o:['Proximity','Similarity','Closure','Common fate'],a:2,e:'Closure: the mind fills in gaps to perceive incomplete shapes as whole forms. Classic example: a circle of dots perceived as complete.'},
+  {t:'premid',tp:'mcq',q:'Nielsen\'s "Recognition rather than recall" means:',o:['Users should be able to undo mistakes','Make options and objects visible so users don\'t need to remember information between steps','Match real-world conventions','Errors should be recognizable from their codes'],a:1,e:'Heuristic #6: minimize memory load. Options, actions, and objects should be visible or easily retrievable. Users should not need to remember what they saw on a previous screen.'},
+  {t:'premid',tp:'mcq',q:'Card sorting is primarily used to:',o:['Test the visual appeal of a design','Understand how users categorize and label information to inform IA and navigation','Measure task completion time','Generate personas from raw data'],a:1,e:'Card sorting reveals users\' mental models for grouping and labeling. Open card sorting informs IA from scratch. Closed card sorting tests whether existing categories make sense.'},
+  {t:'premid',tp:'tf',q:'A use case always describes a single actor interacting with the system through a structured series of steps.',a:true,e:'A use case = actor ↔ system interaction. It defines the precondition, trigger, steps, and postcondition of a specific system function.'},
+  {t:'premid',tp:'mcq',q:'The Gestalt principle of figure-ground describes:',o:['Objects moving in the same direction being grouped','The perceptual separation of a foreground element from its background','Completion of incomplete shapes','Similarity of colour or shape creating groupings'],a:1,e:'Figure-ground: we perceive scenes by separating a "figure" (object of focus) from its "ground" (background). Good design ensures content areas are clearly perceived as figure against background.'},
+  {t:'premid',tp:'mcq',q:'Which Nielsen heuristic is violated when an app has no undo button and changes cannot be reversed?',o:['Visibility of system status','Error prevention','User control and freedom','Consistency and standards'],a:2,e:'Heuristic #3: User control and freedom. Users need an "emergency exit" — support undo and redo. Without it, users feel trapped by mistakes.'},
+  {t:'premid',tp:'mcq',q:'An interactive prototype differs from a static wireframe in that it:',o:['Uses colour while wireframes do not','Includes only animations','Simulates real interactions (clickable flows, transitions) that can be user tested','Is only created by developers'],a:2,e:'Static wireframes define layout and content. Interactive prototypes simulate real interactions (navigation flows, transitions), enabling realistic usability testing before development.'},
+  {t:'premid',tp:'tf',q:'Nielsen\'s "Aesthetic and minimalist design" heuristic means every design should use as little colour as possible.',a:false,e:'Heuristic #8 means screens should not contain irrelevant or rarely needed information — extra information competes with relevant information. It\'s about reducing noise, not eliminating visual design choices.'},
+  {t:'premid',tp:'mcq',q:'The Smallville paper (Lec 22, 2 exam questions) is primarily about:',o:['Card sorting with rural populations','AI agents in a simulated social environment exhibiting emergent social behaviours','No-code design tools for small businesses','WCAG compliance analysis of municipal websites'],a:1,e:'The Smallville paper describes AI agents in a simulated village environment exhibiting emergent social behaviours — relevant to AI, HCI, and the future of UX. Two exam questions specifically reference it.'},
+];
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let st={pool:[],idx:0,correct:0,sel:null,done:false,topic:'all'};
+
+function shuffle(a){
+  const b=[...a];
+  for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}
+  return b;
+}
+
+function startQuiz(topic){
+  st.topic=topic;
+  st.pool=shuffle(topic==='all'?Q:Q.filter(q=>q.t===topic));
+  st.idx=0;st.correct=0;st.sel=null;st.done=false;
+  show('s-quiz');renderQ();
+}
+function startRandom(){
+  st.topic='all';st.pool=shuffle(Q).slice(0,20);
+  st.idx=0;st.correct=0;st.sel=null;st.done=false;
+  show('s-quiz');renderQ();
+}
+
+function renderQ(){
+  const q=st.pool[st.idx];
+  st.sel=null;st.done=false;
+  // progress
+  const pct=(st.idx/st.pool.length)*100;
+  document.getElementById('pFill').style.width=pct+'%';
+  document.getElementById('qCount').textContent=`${st.idx+1} / ${st.pool.length}`;
+  // labels
+  document.getElementById('qTopic').textContent=TN[q.t]||q.t;
+  document.getElementById('qType').textContent=q.tp==='mcq'?'Multiple Choice':'True / False';
+  document.getElementById('qText').textContent=q.q;
+  // options
+  const ol=document.getElementById('optsList');
+  const tf=document.getElementById('tfPair');
+  ol.innerHTML='';tf.innerHTML='';
+  if(q.tp==='mcq'){
+    ol.style.display='flex';tf.style.display='none';
+    ['A','B','C','D'].forEach((l,i)=>{
+      const b=document.createElement('button');
+      b.className='opt';
+      b.innerHTML=`<span class="opt-key">${l}</span><span class="opt-lbl">${q.o[i]}</span>`;
+      b.onclick=()=>selOpt(i);
+      ol.appendChild(b);
+    });
+  } else {
+    ol.style.display='none';tf.style.display='grid';
+    ['True','False'].forEach((l,i)=>{
+      const b=document.createElement('button');
+      b.className='tf-btn';b.textContent=l;
+      b.onclick=()=>selTF(i===0);
+      tf.appendChild(b);
+    });
+  }
+  // reset
+  document.getElementById('explWrap').classList.remove('open');
+  const sb=document.getElementById('subBtn');
+  sb.disabled=true;sb.style.display='block';
+  const nb=document.getElementById('nxtBtn');
+  nb.classList.remove('show');
+  window.scrollTo(0,0);
+}
+
+function selOpt(i){
+  if(st.done)return;st.sel=i;
+  document.querySelectorAll('.opt').forEach((b,j)=>b.classList.toggle('sel',j===i));
+  document.getElementById('subBtn').disabled=false;
+}
+function selTF(v){
+  if(st.done)return;st.sel=v;
+  document.querySelectorAll('.tf-btn').forEach((b,i)=>b.classList.toggle('sel',(i===0)===v));
+  document.getElementById('subBtn').disabled=false;
+}
+
+function submit(){
+  if(st.done||st.sel===null)return;
+  st.done=true;
+  const q=st.pool[st.idx];
+  const ok=st.sel===q.a;
+  if(ok)st.correct++;
+  if(q.tp==='mcq'){
+    document.querySelectorAll('.opt').forEach((b,i)=>{
+      b.disabled=true;b.classList.remove('sel');
+      if(i===q.a)b.classList.add('right');
+      else if(i===st.sel&&!ok)b.classList.add('wrong');
+    });
+  } else {
+    document.querySelectorAll('.tf-btn').forEach((b,i)=>{
+      b.disabled=true;b.classList.remove('sel');
+      const bv=i===0;
+      if(bv===q.a)b.classList.add('right');
+      else if(bv===st.sel&&!ok)b.classList.add('wrong');
+    });
+  }
+  // expl
+  const inn=document.getElementById('explInner');
+  const v=document.getElementById('explV');
+  inn.classList.remove('right-e','wrong-e');v.classList.remove('rv','wv');
+  if(ok){inn.classList.add('right-e');v.classList.add('rv');v.textContent='Correct';}
+  else{inn.classList.add('wrong-e');v.classList.add('wv');v.textContent='Incorrect';}
+  document.getElementById('explBody').textContent=q.e;
+  document.getElementById('explWrap').classList.add('open');
+  document.getElementById('subBtn').style.display='none';
+  const nb=document.getElementById('nxtBtn');
+  const last=st.idx===st.pool.length-1;
+  nb.textContent=last?'See Results':'Continue';
+  nb.classList.add('show');
+}
+
+function next(){
+  if(st.idx===st.pool.length-1){showResults();return;}
+  st.idx++;renderQ();
+}
+
+function showResults(){
+  show('s-res');
+  const total=st.pool.length;
+  const pct=Math.round((st.correct/total)*100);
+  const w=total-st.correct;
+  const el=document.getElementById('resPct');
+  el.textContent=pct+'%';
+  el.className='res-pct '+(pct>=80?'good':pct>=60?'mid':'low');
+  document.getElementById('resSub').textContent=`${st.correct} correct out of ${total}`;
+  document.getElementById('rC').textContent=st.correct;
+  document.getElementById('rW').textContent=w;
+  document.getElementById('rT').textContent=total;
+  let m='';
+  if(pct>=85)m='<strong>Excellent work.</strong> You have a strong handle on this material. Get some rest tonight and walk into the exam with confidence.';
+  else if(pct>=70)m='<strong>Good result.</strong> You know most of this — review the questions you missed and re-read those sections before tomorrow.';
+  else if(pct>=55)m='<strong>Decent start.</strong> Check the explanation for each wrong answer and focus your remaining study time on those topics.';
+  else m='<strong>Keep going.</strong> Use the topic buttons to drill specific areas. The explanations contain all the key points — re-read them carefully.';
+  document.getElementById('resMsg').innerHTML=m;
+}
+
+function retry(){startQuiz(st.topic);}
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function goHome(){show('s-home');}
+</script>
+</body>
+</html>
